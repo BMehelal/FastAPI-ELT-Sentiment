@@ -1,4 +1,4 @@
-import models
+import database.models as models
 
 
 def load_elt(comments, db):

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Date, Integer, String, Text
-from database import Base
+from database.database import Base
 
 
 class Comments(Base):

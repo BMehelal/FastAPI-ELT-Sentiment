@@ -1,10 +1,10 @@
 from typing import Annotated
 from fastapi import FastAPI, HTTPException, Depends
-from database import engine, get_db
-from extract import extract_elt
-from load import load_elt
-import models
-from transform import transform_elt
+from database.database import engine, get_db
+from elt.extract import extract_elt
+from elt.load import load_elt
+import database.models as models
+from elt.transform import transform_elt
 from sqlalchemy.orm import Session 
 
 
