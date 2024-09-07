@@ -5,10 +5,9 @@ def transform_elt(comments):
     try:
         comments_df = pd.json_normalize(comments, sep='.')
 
-        
         columns_to_extract = ['snippet.topLevelComment.snippet.authorDisplayName',
-                            'snippet.topLevelComment.snippet.authorProfileImageUrl', 'snippet.topLevelComment.snippet.textDisplay',
-                            'snippet.topLevelComment.snippet.publishedAt']
+                              'snippet.topLevelComment.snippet.authorProfileImageUrl', 'snippet.topLevelComment.snippet.textDisplay',
+                              'snippet.topLevelComment.snippet.publishedAt']
         extracted_df = comments_df[columns_to_extract]
 
         extracted_df = extracted_df.rename(columns={
@@ -19,12 +18,16 @@ def transform_elt(comments):
         })
 
         # Format the date
-        extracted_df['date'] = pd.to_datetime(extracted_df['date']).dt.strftime('%m-%d-%Y')
-        
+        extracted_df['date'] = pd.to_datetime(
+            extracted_df['date']).dt.strftime('%m-%d-%Y')
+
         # Removes any links from the comments
         extracted_df = extracted_df[~extracted_df['content'].str.contains(
             "<a href", case=False, na=False)]
+        
+        extracted_df = extracted_df[extracted_df['content'].apply(len) <= 600]
 
         return extracted_df
     except Exception as error:
-        raise Exception(f"Something went wrong when extracting the data. {error}")
+        raise Exception(
+            f"Something went wrong when extracting the data. {error}")
