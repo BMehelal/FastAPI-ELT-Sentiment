@@ -13,33 +13,35 @@ api_key = os.getenv("API_KEY")
 def extract_elt(video_id):
 
     if not api_service_name or not api_version or not api_key:
-        raise Exception("Credentials not found")
-
-    youtube = build(
-        api_service_name, api_version, developerKey=api_key)
-    all_comments = []
-    
-    request = youtube.commentThreads().list(
-        part='snippet',
-        videoId=video_id,
-        maxResults=2
-    )
-    response = request.execute()
-    all_comments.extend(response['items'])
-
-    while 'nextPageToken' in response and len(all_comments) < 5:
+        raise Exception("Credentials not found in extracting the data")
+    try:  
+        youtube = build(
+            api_service_name, api_version, developerKey=api_key)
+        all_comments = []
+        
         request = youtube.commentThreads().list(
             part='snippet',
             videoId=video_id,
-            maxResults=2,
-            pageToken=response['nextPageToken']
+            maxResults=2
         )
         response = request.execute()
         all_comments.extend(response['items'])
-    
-    if all_comments:
-        all_comments.pop(0)
-    return all_comments
+
+        while 'nextPageToken' in response and len(all_comments) < 5:
+            request = youtube.commentThreads().list(
+                part='snippet',
+                videoId=video_id,
+                maxResults=2,
+                pageToken=response['nextPageToken']
+            )
+            response = request.execute()
+            all_comments.extend(response['items'])
+        
+        if all_comments:
+            all_comments.pop(0)
+        return all_comments
+    except Exception as error:
+        raise Exception(f"Something went wrong with extracting the data. {error}")
 
 
 
